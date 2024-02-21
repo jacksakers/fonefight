@@ -12,7 +12,7 @@ import {
 import { Button } from "react-bootstrap";
 import { getDoc, doc } from "firebase/firestore";
 
-class Join extends Component {
+class Create extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,7 +28,7 @@ class Join extends Component {
   async componentDidMount() {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       // This function will be called whenever the authentication state changes
-      this.props.didJoin(user);
+      this.props.didCreate(user);
     });
 
     // Clean up the subscription when the component unmounts
@@ -55,11 +55,11 @@ class Join extends Component {
     this.setState({ last: e.target.value });
   }
 
-  async onJoinSubmit(e) {
+  async onCreateSubmit(e) {
     e.preventDefault();
     let _password = this.state.password;
     await logInWithEmailAndPassword(this.state.email, _password);
-    if (auth.currentUser) this.props.didJoin(await this.getUserName());
+    if (auth.currentUser) this.props.didCreate(await this.getUserName());
   }
 
   async getUserName() {
@@ -82,57 +82,47 @@ class Join extends Component {
       return;
     }
     await registerWithEmailAndPassword(name, email, password);
-    if (auth.currentUser) this.props.didJoin(name);
+    if (auth.currentUser) this.props.didCreate(name);
   }
 
-  JoinForm() {
+  CreateForm() {
     return (
       <>
-        <Form onSubmit={(e) => this.onJoinSubmit(e)}>
-          <div className="join-form">
-            <p>Action Code:</p>
-          </div>
-          <Form.Group className="mb-3" >
-            <Form.Control
-              className="input-box"
-              aria-label="Action Code"
-              aria-describedby="basic-addon1"
-              placeholder="Action Code"
-              onChange={(e) => this.onEChange(e)}
-            />
-          </Form.Group>
-          <br />
-          <div className="join-btns">
-            <Button
-              type="submit"
-              className="join-btn"
-              onClick={() => {
-                console.log("POST THAT!");
-              }}
-            >
-              Join Game
-            </Button>
-            <span style={{ color: "white", marginTop: "30px", marginBottom: "10px", fontSize: "18px" }}>
-              Or
-            </span>
-            <Button
-              className="join-btn"
-              onClick={() => this.props.createNewGame()}
-              onTouchStart={() => this.props.createNewGame()}
-              style={{ marginBottom: "15px" }}
-            >
-              Create New Game
-            </Button>
-          </div>
-        </Form>
+        <div className="created-text">
+            <h1>Game Created!</h1>
+            <h1>Action Code:</h1>
+            <span className="action-code">3DG9</span>
+            <h3>Players: 2</h3>
+        </div>
+        <div className="join-btns">
+        <Button
+            type="submit"
+            className="join-btn"
+            onClick={() => {
+            console.log("POST THAT!");
+            }}
+        >
+            Start Game
+        </Button>
+        <span style={{ color: "white", marginTop: "30px", marginBottom: "10px", fontSize: "18px" }}>
+            Or
+        </span>
+        <Button
+            className="join-btn"
+            onClick={() => this.props.goToJoin()}
+            onTouchStart={() => this.props.goToJoin()}
+            style={{ marginBottom: "15px" }}
+        >
+            Join Game
+        </Button>
+        </div>
       </>
     );
   }
 
 
   renderForm() {
-      return this.JoinForm();
-      
+      return this.CreateForm();
   }
 
   render() {
@@ -155,4 +145,4 @@ class Join extends Component {
 }
 
 
-export default Join;
+export default Create;

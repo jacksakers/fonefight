@@ -5,6 +5,7 @@ import React from "react";
 import { db, auth, logout } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Join from "./pages/join";
+import Create from "./pages/create";
 
 class App extends React.Component {
   constructor(props) {
@@ -49,28 +50,25 @@ class App extends React.Component {
     this.setState({ currentPage: "home" });
   }
 
-  handleNewEvent(newEvent) {
-    this.setState({ currentEvent: newEvent, currentPage: "event" });
+  handleNewGame(newEvent) {
+    this.setState({ currentPage: "create" });
   }
 
-  handleEditEvent(eventId) {
-    this.setState({ currentEvent: eventId, currentPage: "edit" });
-  }
-
-  handleEditClicked(eventId) {
-    this.setState({ currentEvent: eventId, currentPage: "event" });
+  handleGoToJoin() {
+    this.updateParams("page=join");
+    this.setState({ currentPage: "join" });
   }
 
   renderContent() {
     switch (this.state.currentPage) {
       case "join":
-        this.updateParams("page=join");
+        // this.updateParams("page=join");
         return <Join didJoin={() => console.log("joined")} 
-                    createNewGame={() => console.log("create new game")}/>;
+                    createNewGame={() => this.handleNewGame()}/>;
       case "create":
         this.updateParams("page=create");
-        return <Join didJoin={() => console.log("joined")} 
-                    createNewGame={() => console.log("create new game")}/>;
+        return <Create didCreate={() => console.log("joined")} 
+                    goToJoin={() => this.handleGoToJoin()}/>;
       default:
         return <></>;
     }
