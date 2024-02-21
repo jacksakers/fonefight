@@ -28,6 +28,11 @@
   color: #61dafb;
 }
 
+body {
+  background-color: #1C3144 !important;
+  font-family: 'K2D', sans-serif !important;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -35,4 +40,41 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.navbar {
+  background-color: #FFBA08;
+  font-family: 'Keania One';
+  justify-content: center !important;
+}
+
+.navbar-brand {
+  font-size: 35px !important;
+}
+
+.join-form {
+  margin: 10px;
+  font-size: 25px;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+
+.input-box {
+  background-color: #A2AEBB !important;
+  color: black;
+  font-size: 20px !important;
+}
+
+.join-btns {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btn {
+  background-color: #3F88C5 !important;
+  font-size: 20px !important;
+  max-width: fit-content;
 }
