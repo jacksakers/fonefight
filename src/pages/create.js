@@ -26,13 +26,13 @@ class Create extends Component {
   }
 
   async componentDidMount() {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      // This function will be called whenever the authentication state changes
-      this.props.didCreate(user);
-    });
+    // const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    //   // This function will be called whenever the authentication state changes
+    //   this.props.didCreate(user);
+    // });
 
-    // Clean up the subscription when the component unmounts
-    return () => unsubscribe();
+    // // Clean up the subscription when the component unmounts
+    // return () => unsubscribe();
   }
 
   onEChange(e) {
@@ -99,7 +99,7 @@ class Create extends Component {
             type="submit"
             className="join-btn"
             onClick={() => {
-            console.log("POST THAT!");
+            this.props.startGame()
             }}
         >
             Start Game

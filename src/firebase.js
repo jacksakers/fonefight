@@ -4,6 +4,7 @@ import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getStorage } from "firebase/storage";
+import {getDatabase } from "firebase/database"
 
 import {
   GoogleAuthProvider,
@@ -46,6 +47,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
+const database = getDatabase(app);
 
 const logInWithEmailAndPassword = async (email, password) => {
   try {
@@ -126,4 +128,5 @@ export {
   sendPasswordReset,
   logout,
   storage,
+  database
 };

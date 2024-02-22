@@ -6,6 +6,7 @@ import { db, auth, logout } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Join from "./pages/join";
 import Create from "./pages/create";
+import Home from "./pages/home";
 
 class App extends React.Component {
   constructor(props) {
@@ -41,17 +42,14 @@ class App extends React.Component {
     }
   }
 
-  handleLogIn(uName) {
-    this.setState({ isLoggedIn: true, username: uName });
-  }
-
-  handleLogOut() {
-    console.log("logging out");
-    this.setState({ currentPage: "home" });
-  }
-
-  handleNewGame(newEvent) {
+  handleNewGame() {
+    
     this.setState({ currentPage: "create" });
+
+  }
+
+  handleStartGame() {
+    this.setState({ currentPage: "home" });
   }
 
   handleGoToJoin() {
@@ -68,7 +66,11 @@ class App extends React.Component {
       case "create":
         this.updateParams("page=create");
         return <Create didCreate={() => console.log("joined")} 
-                    goToJoin={() => this.handleGoToJoin()}/>;
+                    goToJoin={() => this.handleGoToJoin()}
+                    startGame={() => this.handleStartGame()}/>;
+      case "home":
+        this.updateParams("page=home");
+        return <Home />;
       default:
         return <></>;
     }

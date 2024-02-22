@@ -35,14 +35,17 @@ body {
 
 h1 {
   font-size: 60px !important;
+  color: white !important;
 }
 
 h2 {
   font-size: 50px !important;
+  color: white !important;
 }
 
 h3 {
   font-size: 40px !important;
+  color: white !important;
 }
 
 @keyframes App-logo-spin {
@@ -99,4 +102,33 @@ h3 {
 .action-code {
   font-weight: bold;
   font-size: 70px;
+}
+
+.leaderboard-card {
+  min-height: 200px;
+  background-color: #A2AEBB !important;
+}
+
+.leaderboard-item {
+  margin: 5px;
+  font-size: 30px;
+  background-color: #B74D00 !important;
+  color: white !important;
+}
+
+.game-card {
+  max-width: 200px;
+  background-color: #A2AEBB !important;
+  font-size: 40px;
+  margin: 5px;
+}
+
+.available-games {
+  max-height: 600px;
+}
+
+.game-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
