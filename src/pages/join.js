@@ -17,49 +17,26 @@ class Join extends Component {
     super(props);
     this.state = {
       newUser: false,
-      email: "",
-      password: "",
-      cPassword: "",
-      first: "",
-      last: "",
+      gameCode: "",
     };
   }
 
   async componentDidMount() {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      // This function will be called whenever the authentication state changes
-      this.props.didJoin(user);
-    });
+    // const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    //   // This function will be called whenever the authentication state changes
+    //   this.props.didJoin(user);
+    // });
 
-    // Clean up the subscription when the component unmounts
-    return () => unsubscribe();
+    // // Clean up the subscription when the component unmounts
+    // return () => unsubscribe();
   }
 
-  onEChange(e) {
-    this.setState({ email: e.target.value });
-  }
-
-  onPChange(e) {
-    this.setState({ password: e.target.value });
-  }
-
-  onCPChange(e) {
-    this.setState({ cPassword: e.target.value });
-  }
-
-  onFChange(e) {
-    this.setState({ first: e.target.value });
-  }
-
-  onLChange(e) {
-    this.setState({ last: e.target.value });
+  onCChange(e) {
+    this.setState({ gameCode: e.target.value });
   }
 
   async onJoinSubmit(e) {
     e.preventDefault();
-    let _password = this.state.password;
-    await logInWithEmailAndPassword(this.state.email, _password);
-    if (auth.currentUser) this.props.didJoin(await this.getUserName());
   }
 
   async getUserName() {
@@ -71,20 +48,7 @@ class Join extends Component {
       return "GUEST";
     }
   }
-
-  async onSignUpSubmit(e) {
-    e.preventDefault();
-    let email = this.state.email;
-    let password = this.state.password;
-    let name = this.state.first + " " + this.state.last;
-    if (this.state.password !== this.state.cPassword) {
-      alert("Whoops, the passwords do not match!");
-      return;
-    }
-    await registerWithEmailAndPassword(name, email, password);
-    if (auth.currentUser) this.props.didJoin(name);
-  }
-
+  
   JoinForm() {
     return (
       <>
@@ -98,7 +62,7 @@ class Join extends Component {
               aria-label="Action Code"
               aria-describedby="basic-addon1"
               placeholder="Action Code"
-              onChange={(e) => this.onEChange(e)}
+              onChange={(e) => this.onCChange(e)}
             />
           </Form.Group>
           <br />
@@ -107,7 +71,7 @@ class Join extends Component {
               type="submit"
               className="join-btn"
               onClick={() => {
-                console.log("POST THAT!");
+                this.props.joinGame(this.state.gameCode)
               }}
             >
               Join Game

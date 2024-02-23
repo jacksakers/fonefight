@@ -91,7 +91,7 @@ class Create extends Component {
         <div className="created-text">
             <h1>Game Created!</h1>
             <h1>Action Code:</h1>
-            <span className="action-code">3DG9</span>
+            <span className="action-code">{this.props.actionCode}</span>
             <h3>Players: 2</h3>
         </div>
         <div className="join-btns">

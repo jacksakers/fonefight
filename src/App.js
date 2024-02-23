@@ -2,11 +2,13 @@ import "./App.css";
 import NewNavbar from "./components/newnavbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
-import { db, auth, logout } from "./firebase";
+import { db, auth, logout, database } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { ref, set, push } from "firebase/database";
 import Join from "./pages/join";
 import Create from "./pages/create";
 import Home from "./pages/home";
+import { data } from "autoprefixer";
 
 class App extends React.Component {
   constructor(props) {
@@ -17,6 +19,7 @@ class App extends React.Component {
       username: "GUEST",
       currentEvent: "example",
       uid: "",
+      actionCode: ""
     };
   }
 
@@ -42,10 +45,35 @@ class App extends React.Component {
     }
   }
 
+  generateActionCode() {
+    var chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+    var code = '';
+    for (var i = 0; i < 4; i++) {
+      var randomIndex = Math.floor(Math.random() * chars.length);
+      code += chars[randomIndex];
+    }
+    code = code.toUpperCase();
+    this.setState({actionCode: code});
+    return code;
+  }
+  
   handleNewGame() {
-    
+    set(ref(database, 'games/' + this.generateActionCode()), {
+      player: "Test"
+    });
     this.setState({ currentPage: "create" });
+  }
+  
 
+  handleJoinGame(code) {
+
+    
+    const gameListRef = ref(database, 'games/' + code);
+    const newPlayerRef = push(gameListRef);
+    set(newPlayerRef, {
+      player: "NewPlayer"
+    });
+    this.setState({ currentPage: "home" });
   }
 
   handleStartGame() {
@@ -61,11 +89,12 @@ class App extends React.Component {
     switch (this.state.currentPage) {
       case "join":
         // this.updateParams("page=join");
-        return <Join didJoin={() => console.log("joined")} 
+        return <Join joinGame={(code) => this.handleJoinGame(code)} 
                     createNewGame={() => this.handleNewGame()}/>;
       case "create":
         this.updateParams("page=create");
         return <Create didCreate={() => console.log("joined")} 
+                    actionCode = {this.state.actionCode}
                     goToJoin={() => this.handleGoToJoin()}
                     startGame={() => this.handleStartGame()}/>;
       case "home":
