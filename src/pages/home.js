@@ -33,6 +33,16 @@ class Home extends Component {
     // // Clean up the subscription when the component unmounts
     // return () => unsubscribe();
   }
+  
+
+  parseJSONToCards = (data) => {
+    if (!data) return "No Players";
+    return Object.keys(data).map((username, index) => (
+        <Card className="leaderboard-item">
+            {username} - {data[username]}
+        </Card>
+    ));
+  };
 
   HomeForm() {
     return (
@@ -43,15 +53,14 @@ class Home extends Component {
             <h2>Available Games:</h2>
             <Card className="game-card">
               <span>Black vs. Jack</span>
-              <Card.Footer className="text-muted">1 Vote</Card.Footer>
+              <Card.Footer className="text-muted">{(this.props.choices) ? this.props.choices.BVJ : "No"} Vote</Card.Footer>
+              {/* <Card.Footer className="text-muted">{this.props.choices.BVJ} Vote</Card.Footer> */}
             </Card>
           </Col>
           <Col>
             <h2>Leaderboard</h2>
             <Card className="leaderboard-card">
-              <Card className="leaderboard-item">
-                Jack - 10 
-              </Card>
+                {this.parseJSONToCards(this.props.players)}
             </Card>
           </Col>
         </Row>
@@ -59,8 +68,8 @@ class Home extends Component {
           <Col>
             <div className="created-text">
               <h1>Action Code:</h1>
-              <span className="action-code">3DG9</span>
-              <h3>Players: 2</h3>
+              <span className="action-code">{this.props.actionCode}</span>
+              <h3>Players: {this.props.playeramount}</h3>
             </div>
           </Col>
           <Col className="game-countdown">

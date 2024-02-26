@@ -18,6 +18,7 @@ class Join extends Component {
     this.state = {
       newUser: false,
       gameCode: "",
+      username: ""
     };
   }
 
@@ -35,24 +36,30 @@ class Join extends Component {
     this.setState({ gameCode: e.target.value });
   }
 
-  async onJoinSubmit(e) {
-    e.preventDefault();
+  onNChange(e) {
+    this.setState({ username: e.target.value });
   }
 
-  async getUserName() {
-    const docRef = doc(db, "users", auth.currentUser.uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return docSnap.data().name;
-    } else {
-      return "GUEST";
-    }
+  async onJoinSubmit(e) {
+    e.preventDefault();
   }
   
   JoinForm() {
     return (
       <>
         <Form onSubmit={(e) => this.onJoinSubmit(e)}>
+          <div className="join-form">
+            <p>Name:</p>
+          </div>
+          <Form.Group className="mb-3" >
+            <Form.Control
+              className="input-box"
+              aria-label="Action Code"
+              aria-describedby="basic-addon1"
+              placeholder="Name"
+              onChange={(e) => this.onNChange(e)}
+            />
+          </Form.Group>
           <div className="join-form">
             <p>Action Code:</p>
           </div>
@@ -71,7 +78,11 @@ class Join extends Component {
               type="submit"
               className="join-btn"
               onClick={() => {
-                this.props.joinGame(this.state.gameCode)
+                if (this.state.username === "") {
+                  alert("Enter a Name!");
+                  return;
+                }
+                this.props.joinGame(this.state.gameCode, this.state.username)
               }}
             >
               Join Game

@@ -4,11 +4,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import { db, auth, logout, database } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { ref, set, push } from "firebase/database";
+import { ref, set, push, onValue, child, update, increment, get } from "firebase/database";
 import Join from "./pages/join";
 import Create from "./pages/create";
 import Home from "./pages/home";
 import { data } from "autoprefixer";
+import Player from "./pages/player";
 
 class App extends React.Component {
   constructor(props) {
@@ -19,7 +20,8 @@ class App extends React.Component {
       username: "GUEST",
       currentEvent: "example",
       uid: "",
-      actionCode: ""
+      actionCode: "",
+      players: {}
     };
   }
 
@@ -27,19 +29,19 @@ class App extends React.Component {
     // Read query parameters from the URL
     const params = new URLSearchParams(window.location.search);
     const pageTitle = params.get("page");
-    var uidParam = params.get("uid");
+    var uidParam = params.get("username");
     var oidParam = params.get("oid");
     var eventParam = params.get("eventid");
+    var gameCode = params.get("game")
 
     // If there is a 'page' query parameter, navigate to the corresponding page
     if (pageTitle) {
-      if (!uidParam) uidParam = auth.currentUser ? auth.currentUser.uid : "";
-      if (!oidParam) oidParam = "DNE";
       this.setState({
         currentPage: pageTitle,
-        uid: uidParam,
+        username: uidParam,
         oid: oidParam,
         currentEvent: eventParam,
+        actionCode: gameCode
       });
       this.renderContent();
     }
@@ -57,26 +59,32 @@ class App extends React.Component {
     return code;
   }
   
-  handleNewGame() {
-    set(ref(database, 'games/' + this.generateActionCode()), {
-      player: "Test"
+  async handleNewGame() {
+    await set(ref(database, 'games/' + this.generateActionCode()), {
+      playeramount: 0,
+      gamepage: "main",
+      players: {},
+      choices: {"BVJ": 0}
     });
-    this.setState({ currentPage: "create" });
+    this.handleStartGame();    
   }
   
 
-  handleJoinGame(code) {
-
+  handleJoinGame(code, username) {
+    // const gameRef = ref(database, 'games/' + code);
     
-    const gameListRef = ref(database, 'games/' + code);
-    const newPlayerRef = push(gameListRef);
-    set(newPlayerRef, {
-      player: "NewPlayer"
-    });
-    this.setState({ currentPage: "home" });
+    const updates = {};
+    // this.setState({players: {`${username}`: 0}})
+    updates['games/' + code + '/players/' + username] = 0;
+    updates['games/' + code + '/playeramount'] = increment(1);
+    
+    this.updateParams(`page=player&game=${code}&username=${username}`);
+    this.setState({ currentPage: "player", actionCode: code });
+    return update(ref(database), updates);
   }
 
   handleStartGame() {
+    this.updateParams(`page=home&game=${this.state.actionCode}`);
     this.setState({ currentPage: "home" });
   }
 
@@ -85,11 +93,29 @@ class App extends React.Component {
     this.setState({ currentPage: "join" });
   }
 
+  listenToGame() {
+    onValue(ref(database, 'games/' + this.state.actionCode), (snapshot) => {
+      this.setState({players: snapshot.val().players,
+                      playeramount: snapshot.val().playeramount,
+                      choices: snapshot.val().choices,});
+      // console.log(snapshot.val().players);
+    });
+  }
+
+  gameVote(code, voteID) {
+
+    if (voteID === "BVJ") {
+      const updates = {};
+      updates['games/' + code + '/choices/BVJ'] = increment(1);
+      return update(ref(database), updates);
+    }
+  }
+
   renderContent() {
     switch (this.state.currentPage) {
       case "join":
         // this.updateParams("page=join");
-        return <Join joinGame={(code) => this.handleJoinGame(code)} 
+        return <Join joinGame={(code,username) => this.handleJoinGame(code.toUpperCase(),username)} 
                     createNewGame={() => this.handleNewGame()}/>;
       case "create":
         this.updateParams("page=create");
@@ -98,8 +124,14 @@ class App extends React.Component {
                     goToJoin={() => this.handleGoToJoin()}
                     startGame={() => this.handleStartGame()}/>;
       case "home":
-        this.updateParams("page=home");
-        return <Home />;
+        this.listenToGame();
+        return <Home actionCode={this.state.actionCode}
+                      playeramount={this.state.playeramount}
+                      players={this.state.players}
+                      choices={this.state.choices}/>;
+      case "player":
+        return <Player gameVote={(code, voteID) => this.gameVote(code, voteID)}
+                      actionCode={this.state.actionCode}/>;
       default:
         return <></>;
     }

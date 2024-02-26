@@ -55,36 +55,6 @@ class Create extends Component {
     this.setState({ last: e.target.value });
   }
 
-  async onCreateSubmit(e) {
-    e.preventDefault();
-    let _password = this.state.password;
-    await logInWithEmailAndPassword(this.state.email, _password);
-    if (auth.currentUser) this.props.didCreate(await this.getUserName());
-  }
-
-  async getUserName() {
-    const docRef = doc(db, "users", auth.currentUser.uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return docSnap.data().name;
-    } else {
-      return "GUEST";
-    }
-  }
-
-  async onSignUpSubmit(e) {
-    e.preventDefault();
-    let email = this.state.email;
-    let password = this.state.password;
-    let name = this.state.first + " " + this.state.last;
-    if (this.state.password !== this.state.cPassword) {
-      alert("Whoops, the passwords do not match!");
-      return;
-    }
-    await registerWithEmailAndPassword(name, email, password);
-    if (auth.currentUser) this.props.didCreate(name);
-  }
-
   CreateForm() {
     return (
       <>
